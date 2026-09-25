@@ -1,4 +1,4 @@
-# UniIntervene — Project Page
+# FIND — Project Page
 
 Static project / paper page for **Find Something You Can’t Do: Agentic Real-World Reinforcement Learning for Self-Improving VLA Models**. Pure HTML/CSS/JS,
 no build step.
