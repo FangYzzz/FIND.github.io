@@ -1,37 +1,33 @@
-# FIND — Project Page
+# FIND project page
 
-Static project / paper page for **Find Something You Can’t Do: Agentic Real-World Reinforcement Learning for Self-Improving VLA Models**. Pure HTML/CSS/JS,
-no build step.
+Project page for **Find Something You Can’t Do: Agentic Real-World Reinforcement Learning for Self-Improving VLA Models**.
 
-```
-website/
-├── index.html              # the page
-├── .nojekyll               # tell GitHub Pages to serve files as-is
-└── static/
-    ├── css/style.css
-    ├── js/main.js
-    ├── images/             # figures (converted from the paper PDFs) + logo
-    └── videos/             # system demos + ours-vs-baseline comparison clips
-```
+The page is plain HTML, CSS, and JavaScript. It uses the supplied paper and overview video. The site plays H.264/AAC copies from static/videos/web. Original videos stay in static/videos as source files. Figures 1–3 were cropped from the paper for the overview, method, and results sections.
 
-## Preview locally
+## Preview
+
+From this repository's root:
 
 ```bash
-cd website
 python3 -m http.server 8000
-# open http://localhost:8000
 ```
 
-## Deploy to GitHub Pages
+Open http://localhost:8000. No build step is needed.
 
-1. Create a repo and push the **contents of this `website/` folder** to the repo root
-   (so `index.html` sits at the top level).
-2. In the repo: **Settings → Pages → Build and deployment → Deploy from a branch**,
-   pick `main` and `/ (root)`.
-3. The page goes live at `https://<user>.github.io/<repo>/`.
+## Files
 
-> Keeping the page in a subfolder instead? Push the whole repo and set Pages to the
-> `/docs` folder (rename `website` → `docs`), or use a GitHub Action that publishes
-> `website/` as the Pages artifact.
+- `index.html` — page content
+- `static/css/style.css` — responsive layout and colors
+- `static/js/main.js` — mobile navigation and citation copy button
+- `static/images/` — cropped paper figures, overview poster, and eight task posters
+- `static/videos/find-overview.mp4` — source overview video
+- `static/videos/task_1.mp4` through `task_8.mp4` — source task videos
+- `static/videos/web/` — browser-compatible videos used by the page
+- `scripts/prepare-videos.sh` — regenerate browser videos and task posters after replacing any source
+- `static/papers/FIND.pdf` — downloadable paper
 
+To refresh the web copies and task posters after replacing a source video, run `./scripts/prepare-videos.sh`.
 
+## Publishing
+
+The repository root contains `index.html` and `.nojekyll`, so it can be served as a static site. The page does not state the submission venue. The Paper button opens the local PDF; arXiv, Code, and Video temporarily point to the project website. The citation shown on the page is provisional.

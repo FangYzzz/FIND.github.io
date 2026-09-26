@@ -1,150 +1,99 @@
-/* ============================================================
-   UniIntervene — project page interactions
-   ============================================================ */
-(function () {
-  "use strict";
-
-  /* ---- Mobile nav toggle ---- */
-  const navToggle = document.getElementById("navToggle");
-  const navLinks = document.getElementById("navLinks");
-  if (navToggle && navLinks) {
-    navToggle.addEventListener("click", () => navLinks.classList.toggle("open"));
-    navLinks.querySelectorAll("a").forEach((a) =>
-      a.addEventListener("click", () => navLinks.classList.remove("open"))
-    );
-  }
-
-  /* ---- Scroll reveal ---- */
-  const revealEls = document.querySelectorAll(".reveal");
-  if ("IntersectionObserver" in window) {
-    const ro = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            ro.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    revealEls.forEach((el) => ro.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add("in"));
-  }
-
-  /* ---- Robust play helper: waits for data before calling play() ---- */
-  function safePlay(v) {
-    if (!v) return;
-    if (v.readyState >= 2) {
-      const p = v.play();
-      if (p && p.catch) p.catch(() => {});
-    } else {
-      v.addEventListener(
-        "canplay",
-        () => {
-          const p = v.play();
-          if (p && p.catch) p.catch(() => {});
-        },
-        { once: true }
-      );
-    }
-  }
-
-  /* ---- Lazy autoplay videos only when visible (saves bandwidth) ---- */
-  const lazyVideos = document.querySelectorAll("video[data-lazy]");
-  if ("IntersectionObserver" in window) {
-    const vo = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          const v = e.target;
-          if (e.isIntersecting) {
-            if (v.dataset.init !== "1") {
-              v.dataset.init = "1";
-              v.preload = "auto";
-              v.load();
-            }
-            safePlay(v);
-          } else {
-            v.pause();
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-    lazyVideos.forEach((v) => vo.observe(v));
-  } else {
-    lazyVideos.forEach((v) => {
-      v.preload = "auto";
-      v.load();
-      safePlay(v);
-    });
-  }
-
-  /* ---- Comparison tabs ---- */
-  const tabs = document.querySelectorAll("#cmpTabs .tab");
-  const ours = document.getElementById("cmpOurs");
-  const base = document.getElementById("cmpBase");
-  const sources = {
-    insert: ["insert_uniIntervene", "insert_hilserl"],
-    ram:    ["ram_uniIntervene",    "ram_hilserl"],
-    wipe:   ["wipe_UniIntervene",   "wipe_hilserl"],
-    fold:   ["fold_uniIntervene",   "fold_hilserl"],
-  };
-  function swap(video, base) {
-    if (!video) return;
-    video.pause();
-    video.setAttribute("poster", "static/images/posters/" + base + ".jpg");
-    video.setAttribute("src", "static/videos/" + base + ".mp4");
-    video.preload = "auto";
-    video.dataset.init = "1";
-    video.load();
-    safePlay(video);
-  }
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      tabs.forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
-      const key = tab.dataset.cmp;
-      if (sources[key]) {
-        swap(ours, sources[key][0]);
-        swap(base, sources[key][1]);
-      }
-    });
-  });
-
-  /* ---- BibTeX copy ---- */
-  const copyBtn = document.getElementById("copyBib");
-  const bibText = document.getElementById("bibText");
-  if (copyBtn && bibText) {
-    copyBtn.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(bibText.innerText.trim());
-      } catch (e) {
-        const r = document.createRange();
-        r.selectNode(bibText);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(r);
-        document.execCommand("copy");
-        sel.removeAllRanges();
-      }
-      copyBtn.textContent = "Copied!";
-      copyBtn.classList.add("copied");
-      setTimeout(() => {
-        copyBtn.textContent = "Copy";
-        copyBtn.classList.remove("copied");
-      }, 1800);
-    });
-  }
-
-  /* ---- Shrink nav shadow on scroll ---- */
-  const nav = document.getElementById("nav");
-  if (nav) {
-    const onScroll = () => {
-      nav.style.boxShadow = window.scrollY > 8 ? "0 6px 24px rgba(67,40,136,.08)" : "none";
+(() => {
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  if (toggle && links) {
+    const close = () => {
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open navigation');
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    toggle.addEventListener('click', () => {
+      const open = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    });
+    links.querySelectorAll('a').forEach(link => link.addEventListener('click', close));
+  }
+  const copy = document.getElementById('copyBibtex');
+  const code = document.getElementById('bibtexCode');
+  if (copy && code) {
+    copy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent.trim());
+        copy.textContent = 'Copied';
+        window.setTimeout(() => { copy.textContent = 'Copy'; }, 2000);
+      } catch {
+        copy.textContent = 'Select text to copy';
+        window.setTimeout(() => { copy.textContent = 'Copy'; }, 2000);
+      }
+    });
+  }
+  const carousel = document.getElementById('taskCarousel');
+  const taskVideo = document.getElementById('taskVideo');
+  const taskNumber = document.getElementById('taskNumber');
+  const taskTitle = document.getElementById('taskTitle');
+  const progress = document.getElementById('taskProgress');
+  const overviewVideo = document.getElementById('overviewVideo');
+  const taskNames = [
+    'Put a cube into the bowl',
+    'Take the cube out of the bowl',
+    'Stack one cube on the other',
+    'Take the top cube off',
+    'Open the drawer',
+    'Close the drawer',
+    'Hang the mug on the mug tree',
+    'Take the mug off the mug tree'
+  ];
+
+  if (carousel && taskVideo && taskNumber && taskTitle && progress) {
+    let current = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const markers = taskNames.map(() => {
+      const marker = document.createElement('span');
+      progress.appendChild(marker);
+      return marker;
+    });
+    markers[0].classList.add('active');
+
+    function showTask(next) {
+      const wasPlaying = !taskVideo.paused;
+      taskVideo.pause();
+      current = (next + taskNames.length) % taskNames.length;
+      const index = current + 1;
+      taskVideo.src = 'static/videos/web/task_' + index + '.mp4?v=web3';
+      taskVideo.poster = 'static/images/task-posters/task_' + index + '.jpg?v=firstframe3';
+      taskVideo.setAttribute('aria-label', taskNames[current]);
+      taskVideo.load();
+      taskNumber.textContent = String(index).padStart(2, '0');
+      taskTitle.textContent = taskNames[current];
+      markers.forEach((marker, i) => marker.classList.toggle('active', i === current));
+      if (wasPlaying) taskVideo.play().catch(() => {});
+    }
+
+    document.getElementById('taskPrev').addEventListener('click', () => showTask(current - 1));
+    document.getElementById('taskNext').addEventListener('click', () => showTask(current + 1));
+    carousel.addEventListener('keydown', event => {
+      if (event.target !== carousel) return;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        showTask(current + (event.key === 'ArrowRight' ? 1 : -1));
+      }
+    });
+    carousel.addEventListener('touchstart', event => {
+      touchStartX = event.changedTouches[0].clientX;
+      touchStartY = event.changedTouches[0].clientY;
+    }, { passive: true });
+    carousel.addEventListener('touchend', event => {
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      const dy = event.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+        showTask(current + (dx < 0 ? 1 : -1));
+      }
+    }, { passive: true });
+    if (overviewVideo) {
+      overviewVideo.addEventListener('play', () => taskVideo.pause());
+      taskVideo.addEventListener('play', () => overviewVideo.pause());
+    }
   }
 })();
