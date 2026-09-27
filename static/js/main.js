@@ -28,72 +28,15 @@
       }
     });
   }
-  const carousel = document.getElementById('taskCarousel');
-  const taskVideo = document.getElementById('taskVideo');
-  const taskNumber = document.getElementById('taskNumber');
-  const taskTitle = document.getElementById('taskTitle');
-  const progress = document.getElementById('taskProgress');
   const overviewVideo = document.getElementById('overviewVideo');
-  const taskNames = [
-    'Put a cube into the bowl',
-    'Take the cube out of the bowl',
-    'Stack one cube on the other',
-    'Take the top cube off',
-    'Open the drawer',
-    'Close the drawer',
-    'Hang the mug on the mug tree',
-    'Take the mug off the mug tree'
-  ];
-
-  if (carousel && taskVideo && taskNumber && taskTitle && progress) {
-    let current = 0;
-    let touchStartX = 0;
-    let touchStartY = 0;
-    const markers = taskNames.map(() => {
-      const marker = document.createElement('span');
-      progress.appendChild(marker);
-      return marker;
+  const taskVideos = [...document.querySelectorAll('.task-video')];
+  taskVideos.forEach(video => {
+    video.addEventListener('play', () => {
+      taskVideos.forEach(other => { if (other !== video) other.pause(); });
+      if (overviewVideo) overviewVideo.pause();
     });
-    markers[0].classList.add('active');
-
-    function showTask(next) {
-      const wasPlaying = !taskVideo.paused;
-      taskVideo.pause();
-      current = (next + taskNames.length) % taskNames.length;
-      const index = current + 1;
-      taskVideo.src = 'static/videos/web/task_' + index + '.mp4?v=web3';
-      taskVideo.poster = 'static/images/task-posters/task_' + index + '.jpg?v=firstframe3';
-      taskVideo.setAttribute('aria-label', taskNames[current]);
-      taskVideo.load();
-      taskNumber.textContent = String(index).padStart(2, '0');
-      taskTitle.textContent = taskNames[current];
-      markers.forEach((marker, i) => marker.classList.toggle('active', i === current));
-      if (wasPlaying) taskVideo.play().catch(() => {});
-    }
-
-    document.getElementById('taskPrev').addEventListener('click', () => showTask(current - 1));
-    document.getElementById('taskNext').addEventListener('click', () => showTask(current + 1));
-    carousel.addEventListener('keydown', event => {
-      if (event.target !== carousel) return;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-        event.preventDefault();
-        showTask(current + (event.key === 'ArrowRight' ? 1 : -1));
-      }
-    });
-    carousel.addEventListener('touchstart', event => {
-      touchStartX = event.changedTouches[0].clientX;
-      touchStartY = event.changedTouches[0].clientY;
-    }, { passive: true });
-    carousel.addEventListener('touchend', event => {
-      const dx = event.changedTouches[0].clientX - touchStartX;
-      const dy = event.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.3) {
-        showTask(current + (dx < 0 ? 1 : -1));
-      }
-    }, { passive: true });
-    if (overviewVideo) {
-      overviewVideo.addEventListener('play', () => taskVideo.pause());
-      taskVideo.addEventListener('play', () => overviewVideo.pause());
-    }
+  });
+  if (overviewVideo) {
+    overviewVideo.addEventListener('play', () => taskVideos.forEach(video => video.pause()));
   }
 })();

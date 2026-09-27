@@ -7,7 +7,7 @@
 <meta property="og:title" content="FIND — Find Something You Can’t Do"><meta property="og:description" content="Agentic real-world reinforcement learning for self-improving VLA models."><meta property="og:image" content="static/images/system-overview.png"><meta property="og:type" content="website">
 <title>FIND — Agentic Real-World RL for Self-Improving VLA Models</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="static/css/style.css?v=13"><script src="static/js/main.js?v=7" defer></script>
+<link rel="stylesheet" href="static/css/style.css?v=16"><script src="static/js/main.js?v=8" defer></script>
 <style>
 .hero-buttons{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:30px}
 .hero-buttons .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:1px solid transparent;border-radius:999px;color:#fff;font:600 .96rem/1.5 "DM Sans",Arial,sans-serif;letter-spacing:.01em;white-space:nowrap;text-decoration:none;transition:transform .15s,box-shadow .2s}
@@ -50,14 +50,61 @@
 </div></section>
 <section class="section section-tinted" id="video"><div class="container"><div class="section-heading"><h2 class="numbered-title"><span class="section-index">02</span>FIND in the real world.</h2><p>See the autonomous practice loop and robot learning setup in the accompanying video.</p></div><div class="video-shell"><video id="overviewVideo" controls preload="metadata" playsinline poster="static/images/video-poster.jpg"><source src="static/videos/web/find-overview.mp4?v=web2" type="video/mp4">Your browser does not support the video element.</video></div>
 </div></section>
-<section class="section" id="method"><div class="container"><div class="section-heading"><h2 class="numbered-title"><span class="section-index">03</span>One continuous learning loop.</h2><p>The physical workspace persists between episodes. FIND adapts its practice to the scene and to the policy’s current weaknesses.</p></div><div class="steps"><article class="step"><span class="step-num">01</span><h3>Understand the scene</h3><p>A vision–language agent selects which of the eight predefined tasks are feasible in the current workspace.</p></article><article class="step"><span class="step-num">02</span><h3>Practice a weakness</h3><p>A performance-aware curriculum puts more weight on feasible tasks with lower recent success rates.</p></article><article class="step"><span class="step-num">03</span><h3>Evaluate the outcome</h3><p>Before and after images let the agent judge success without human reward labels during online learning.</p></article><article class="step"><span class="step-num">04</span><h3>Improve the policy</h3><p>Residual off-policy RL learns corrective actions around a frozen VLA while robot interaction continues.</p></article></div><figure class="figure-card method-figure"><img src="static/images/task-selection.png" loading="lazy" alt="Paper illustration of FIND adapting task sampling after each rollout according to scene feasibility and recent success rates" width="1293" height="408"><figcaption>After every attempt, both the scene and success history change the next task distribution. From Fig. 2 of the paper.</figcaption></figure></div></section>
-<section class="section section-tinted" id="tasks"><div class="container"><div class="section-heading"><h2 class="numbered-title"><span class="section-index">04</span>Eight tasks. One persistent workspace.</h2><p>Reversible or mutually compatible tasks allow one rollout’s final scene to become the next rollout’s starting point.</p></div><div class="task-grid"><div class="task"><span>01</span> Put a cube into the bowl</div><div class="task"><span>02</span> Take the cube out of the bowl</div><div class="task"><span>03</span> Stack one cube on the other</div><div class="task"><span>04</span> Take the top cube off</div><div class="task"><span>05</span> Open the drawer</div><div class="task"><span>06</span> Close the drawer</div><div class="task"><span>07</span> Hang the mug on the mug tree</div><div class="task"><span>08</span> Take the mug off the mug tree</div></div><div class="task-showcase"><div class="task-showcase-head"><div><span class="section-index">REAL-WORLD ROLLOUTS</span><h3>Eight tasks in action</h3></div><p></p></div>
-<div class="task-carousel" id="taskCarousel" tabindex="0" aria-label="Task video carousel">
-  <div class="task-carousel-stage"><video id="taskVideo" controls preload="metadata" playsinline poster="static/images/task-posters/task_1.jpg?v=firstframe3" src="static/videos/web/task_1.mp4?v=web3" aria-label="Put a cube into the bowl"></video>
-    <button class="carousel-arrow carousel-prev" id="taskPrev" type="button" aria-label="Previous task video"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M16 4 8 12l8 8"/></svg></button>
-    <button class="carousel-arrow carousel-next" id="taskNext" type="button" aria-label="Next task video"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="m8 4 8 8-8 8"/></svg></button>
+<section class="section" id="method">
+  <div class="container">
+    <div class="section-heading">
+      <h2 class="numbered-title"><span class="section-index">03</span>HOW FIND works</h2>
+      <p>We introduce FIND, an agentic real-world RL framework that closes the autonomous loop between scene understanding, weakness-aware practice, self-evaluation, and policy improvement in a persistent workspace.</p>
+    </div>
+    <figure class="figure-card method-figure method-overview-figure">
+      <img src="static/images/method_overview.gif?v=2" loading="lazy" alt="FIND's autonomous loop connects scene-conditioned task selection, VLM outcome evaluation, a frozen VLA with a residual policy, and asynchronous reinforcement learning" width="1280" height="548">
+    </figure>
+    <div class="steps">
+      <article class="step"><span class="step-num">01</span><h3>Scene-conditioned task selection</h3><p>Scene-conditioned task selection allows FIND to continue practicing without repeatedly restoring the manipulated objects to a predefined configuration.</p></article>
+      <article class="step"><span class="step-num">02</span><h3>Performance-aware curriculum</h3><p>FIND instead tracks recent task performance and gives higher priority to tasks on which the current policy performs poorly.</p></article>
+      <article class="step"><span class="step-num">03</span><h3>Paired-image self-evaluation</h3><p>Paired-image self-evaluation provides autonomous task-level supervision without requiring human outcome labels.</p></article>
+      <article class="step"><span class="step-num">04</span><h3>Policy Improvement via Residual Reinforcement Learning</h3><p>The pretrained VLA remains frozen, while a lightweight residual policy learns bounded corrections from offline demonstrations and autonomously collected experience.</p></article>
+    </div>
+    <figure class="figure-card method-figure method-iteration-figure">
+      <figcaption class="method-iteration-label">Scene-conditioned task selection · Performance-aware curriculum</figcaption>
+      <img src="static/images/iter_overview.gif?v=2" loading="lazy" alt="Animated diagram of FIND updating task sampling across iterations as the scene and recent success rates change" width="1280" height="409">
+    </figure>
   </div>
-  <div class="task-carousel-caption" aria-live="polite"><div><span class="task-carousel-label">TASK <span id="taskNumber">01</span> / 08</span><h4 id="taskTitle">Put a cube into the bowl</h4></div><div class="task-carousel-progress" id="taskProgress" aria-hidden="true"></div></div>
+</section>
+<section class="section section-tinted" id="tasks"><div class="container"><div class="section-heading"><h2 class="numbered-title"><span class="section-index">04</span>Eight tasks. One persistent workspace.</h2><p>Reversible or mutually compatible tasks allow one rollout’s final scene to become the next rollout’s starting point.</p></div><div class="task-grid"><div class="task"><span>01</span> Put a cube into the bowl</div><div class="task"><span>02</span> Take the cube out of the bowl</div><div class="task"><span>03</span> Stack one cube on the other</div><div class="task"><span>04</span> Take the top cube off</div><div class="task"><span>05</span> Open the drawer</div><div class="task"><span>06</span> Close the drawer</div><div class="task"><span>07</span> Hang the mug on the mug tree</div><div class="task"><span>08</span> Take the mug off the mug tree</div></div><div class="task-showcase"><div class="task-showcase-head"><div><span class="section-index">REAL-WORLD ROLLOUTS</span><h3>Eight tasks in action</h3></div><p></p></div>
+<div class="task-video-grid" aria-label="Eight task videos">
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_1.jpg?v=firstframe3" src="static/videos/web/task_1.mp4?v=web3" aria-label="Put a cube into the bowl">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 01</span><h4>Put a cube into the bowl</h4></div>
+  </article>
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_2.jpg?v=firstframe3" src="static/videos/web/task_2.mp4?v=web3" aria-label="Take the cube out of the bowl">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 02</span><h4>Take the cube out of the bowl</h4></div>
+  </article>
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_3.jpg?v=firstframe3" src="static/videos/web/task_3.mp4?v=web3" aria-label="Stack one cube on the other">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 03</span><h4>Stack one cube on the other</h4></div>
+  </article>
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_4.jpg?v=firstframe3" src="static/videos/web/task_4.mp4?v=web3" aria-label="Take the top cube off">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 04</span><h4>Take the top cube off</h4></div>
+  </article>
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_5.jpg?v=firstframe3" src="static/videos/web/task_5.mp4?v=web3" aria-label="Open the drawer">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 05</span><h4>Open the drawer</h4></div>
+  </article>
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_6.jpg?v=firstframe3" src="static/videos/web/task_6.mp4?v=web3" aria-label="Close the drawer">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 06</span><h4>Close the drawer</h4></div>
+  </article>
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_7.jpg?v=firstframe3" src="static/videos/web/task_7.mp4?v=web3" aria-label="Hang the mug on the mug tree">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 07</span><h4>Hang the mug on the mug tree</h4></div>
+  </article>
+  <article class="task-video-card">
+    <video class="task-video" controls preload="none" playsinline poster="static/images/task-posters/task_8.jpg?v=firstframe3" src="static/videos/web/task_8.mp4?v=web3" aria-label="Take the mug off the mug tree">Your browser does not support the video element.</video>
+    <div class="task-video-caption"><span>TASK 08</span><h4>Take the mug off the mug tree</h4></div>
+  </article>
 </div></div></div></section>
 <section class="section" id="results"><div class="container"><div class="section-heading"><h2 class="numbered-title"><span class="section-index">05</span>Improvement through interaction.</h2><p>The full FIND system improves independent human-assessed task success across eight real-world tasks.</p></div><div class="result-layout"><div class="result-panel"><div class="result-label">Human-assessed success rate</div><div class="result-main">55% <span>→</span> 71.9%</div><p>Mean across five runs at the final checkpoint. Human-assessed evaluation rollouts were kept separate from training.</p><div class="result-rule"></div><div class="result-split"><div><strong>6 h</strong><span>interaction</span></div><div><strong>30</strong><span>scene-recovery interventions</span></div><div><strong>48 min</strong><span>longest uninterrupted run</span></div></div></div><figure class="figure-card result-figure"><img src="static/images/results.png" loading="lazy" alt="Paper plots showing learning curves, task sampling distribution, and per-task success and sampling trends" width="1293" height="703"><figcaption>Learning curves and adaptive task sampling from Fig. 3 of the paper.</figcaption></figure></div><p class="result-note">In the representative 6-hour run, 426 of 456 episodes proceeded without human intervention. The 30 interventions were manual scene recoveries; online learning required no human-provided reward labels.</p></div></section>
 <section class="section section-tinted" id="bibtex"><div class="container"><div class="section-heading"><h2 class="numbered-title"><span class="section-index">06</span>Citation</h2></div><div class="citation"><button id="copyBibtex" type="button" aria-label="Copy BibTeX citation">Copy</button><pre><code id="bibtexCode">@misc{fangfind,
