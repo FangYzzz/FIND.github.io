@@ -2,7 +2,7 @@
 
 Project page for **Find Something You Can’t Do: Agentic Real-World Reinforcement Learning for Self-Improving VLA Models**.
 
-The page is plain HTML, CSS, and JavaScript. It uses the supplied paper and overview video. The site plays H.264/AAC copies from static/videos/web. Original videos stay in static/videos as source files. Figures 1 and 3 were cropped from the paper for the overview and results sections. The method section uses animated GIFs derived from the supplied overview videos.
+The page is plain HTML, CSS, and JavaScript. It uses the supplied paper and overview video. The overview video appears in the hero and automatically plays muted on a loop, with controls to pause or enable sound. The site plays H.264/AAC copies from static/videos/web. Original videos stay in static/videos as source files. Figures 1 and 3 were cropped from the paper for the overview and results sections. The method section uses animated GIFs derived from the supplied overview videos.
 
 ## Preview
 
@@ -32,4 +32,4 @@ To refresh the web copies and task posters after replacing a source video, run `
 
 ## Publishing
 
-The repository root contains `index.html` and `.nojekyll`, so it can be served as a static site. The page does not state the submission venue. The Paper button opens the local PDF; arXiv, Code, and Video temporarily point to the project website. The citation shown on the page is provisional.
+The repository root contains `index.html` and `.nojekyll`, so it can be served as a static site. The page does not state the submission venue. The Paper button opens the local PDF; arXiv and Code temporarily point to the project website. The citation shown on the page is provisional.
