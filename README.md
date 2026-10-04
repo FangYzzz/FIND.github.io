@@ -32,4 +32,4 @@ To refresh the web copies and task posters after replacing a source video, run `
 
 ## Publishing
 
-The repository root contains `index.html` and `.nojekyll`, so it can be served as a static site. The page does not state the submission venue. The Paper button opens the local PDF; arXiv and Code temporarily point to the project website. The citation shown on the page is provisional.
+The repository root contains `index.html` and `.nojekyll`, so it can be served as a static site. The page does not state the submission venue. The Paper button opens the local PDF; the Code button opens [the FIND GitHub repository](https://github.com/FangYzzz/FIND), and the arXiv button opens [the paper on arXiv](https://arxiv.org/abs/2609.32069). The citation shown on the page is provisional.
